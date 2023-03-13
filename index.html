@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPT-3 Demo</title>
+    <meta charset="utf-8">
+    <style>
+        /* 样式代码 */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GPT-3 Demo</h1>
+        <form id="gpt-form">
+            <label for="prompt">输入：</label>
+            <textarea id="prompt" name="prompt" placeholder="输入你的问题或文本"></textarea>
+            <br>
+            <label for="model">模型：</label>
+            <select id="model" name="model">
+                <option value="davinci">Davinci</option>
+                <option value="curie">Curie</option>
+                <option value="babbage">Babbage</option>
+                <option value="ada">Ada</option>
+            </select>
+            <br>
+            <label for="temperature">温度：</label>
+            <input type="range" id="temperature" name="temperature" min="0.1" max="1" step="0.1" value="0.5">
+            <br>
+            <label for="max-length">最大输出长度：</label>
+            <input type="number" id="max-length" name="max-length" min="1" max="2048" value="50">
+            <br>
+            <button type="submit">生成</button>
+        </form>
+        <div id="gpt-output">
+            <p>输出：</p>
+            <pre id="gpt-text"></pre>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@openai/api@0.7.1/dist/index.umd.js"></script>
+    <script>
+        const form = document.getElementById("gpt-form");
+        const promptInput = document.getElementById("prompt");
+        const modelSelect = document.getElementById("model");
+        const temperatureInput = document.getElementById("temperature");
+        const maxLengthInput = document.getElementById("max-length");
+        const outputText = document.getElementById("gpt-text");
+
+        // TODO: 将 YOUR_API_KEY_HERE 替换为你自己的 GPT-3 API key
+        const openai = new OpenAI(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);
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const prompt = promptInput.value.trim();
+            const model = modelSelect.value;
+            const temperature = parseFloat(temperatureInput.value);
+            const maxLength = parseInt(maxLengthInput.value);
+            generateText(prompt, model, temperature, maxLength);
+        });
+
+        async function generateText(prompt, model, temperature, maxLength) {
+            outputText.textContent = "正在生成，请稍候...";
+            try {
+                const result = await openai.complete({
+                    prompt: prompt,
+                    model: "text-davinci-002",
+                    temperature: temperature,
+                    maxTokens: maxLength,
+                });
+                outputText.textContent = result.choices[0].text.trim();
+            } catch (error) {
+                outputText.textContent = "生成失败：" + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
